@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<title>Valentines Card</title>
+	<style>
+	body {
+		background: linear-gradient(to bottom right, pink, #FF8787);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100vh;
+	}
+
+	.container {
+		position: relative;
+		animation: 1.5s beat infinite;
+	}
+
+	.heart {
+		position: relative;
+		background-color: red;
+		display: inline-block;
+		height: 180px;
+		top:0;
+		left:0;
+		transform: rotate(-45deg);
+		width:180px;
+	}
+
+	.heart:before, .heart:after {
+		content:"";
+		background-color: red;
+		border-radius:50%;
+		height: 180px;
+		width: 180px;
+		position: absolute;
+		width: 180px;
+	}
+
+	.heart:before {
+		top:-90px;
+		left:0;
+	}
+
+	.heart:after {
+		left:90px;
+		top:0;
+	}
+
+	@keyframes beat {
+		0% {
+			transform: scale(1);
+		  }
+		25% {
+			transform: scale(1.2);
+		  }
+		40% {
+			transform: scale(1);
+		  }
+		60% {
+			transform: scale(1.2);
+		  }
+		100% {
+			transform: scale(1);
+		  }
+	}
+
+	.heart-text {
+		position: absolute;
+		top: 40%;
+		left: 50%;
+		transform: translate(-40%, -50%) rotate(45deg);
+		color: white;
+		font-size: 40px;
+		z-index: 1;
+		text-align: center;
+		font-family: 'Dancing Script', cursive;
+	}
+	.heart-text1 {
+		position: absolute;
+		top: 83%;
+		left: 20%;
+		transform: translate(-60%, -50%) rotate(45deg);
+		color: white;
+		font-size: 15px;
+		z-index: 1;
+		text-align: center;
+		font-family: 'Dancing Script', cursive;
+	}
+
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<a href="https://www.ravearnrecipes.co.uk/i-love-you">
+			<div class="heart">
+        		<span class="heart-text">Happy Valentines Day</span>
+				<span class="heart-text1">Click Me</span>
+			</div>
+		</a>
+  </div>
+</body>
+</html>
