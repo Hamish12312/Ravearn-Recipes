@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+<title>Sophie and Hamish</title>
+	<style>
+		body {
+			background-color: pink;
+			cursor: none; /* Hide the default cursor */
+		}
+		
+		.container {
+  			position: relative;
+			text-align: center;
+		}
+
+		.center {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			font-size: 40px; 
+			font-family: 'Dancing Script', cursive;
+			font-weight: 700;
+			color: ; /* Added for better visibility on the rose */
+		}
+		.rose {
+			width: 25%;
+			height: auto;
+		}
+		
+		.heart-cursor {
+			position: absolute;
+			width: 32px;
+			height: 32px;
+			background-image: url('https://i.imgur.com/t3YwEzW.png'); /* Heart emoji image URL */
+			background-size: contain;
+			z-index: 9999; /* Ensure it's on top of other elements */
+			pointer-events: none; /* Make sure it doesn't interfere with mouse events */
+    	}
+	
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<img class="rose" src="https://i.imgur.com/4zaLq36.png" alt="Rose">
+		<div class="center">
+			Happy
+			<br>
+			Valentines Day
+			<br>
+			Sophie
+		</div>
+		
+	</div>
+	<div class="heart-cursor"></div>
+
+    <script>
+        document.addEventListener('mousemove', (event) => {
+            const heartCursor = document.querySelector('.heart-cursor');
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+
+            heartCursor.style.left = mouseX + 'px';
+            heartCursor.style.top = mouseY + 'px';
+        });
+    </script>
+</body>
+</html>
