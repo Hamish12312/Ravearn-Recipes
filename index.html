@@ -1,18 +1,250 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home | Example Website</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredericka+the+Great&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Single+Day&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sofia&display=swap" rel="stylesheet">
+<title>Ravearn Recipe 2</title>
 </head>
+	<style>
+		body {
+			padding-left: 10%;
+			padding-right: 10%;
+			height: 100vh;
+			background: #bfa795;
+		}
+		p {
+			margin: 0px;
+		}
+		a {
+        color: inherit; /* Inherit color from parent */
+        text-decoration: none; /* Remove underline */
+    	}
+		hr {
+			background-color: #404040;
+			height: 3px;
+			border-style: none;
+		}
+		.header {
+  			display: grid;
+  			grid-template-columns: auto;
+			padding: 0px;
+		}
+		.homepagetitle {
+			font-family: 'Fredericka the Great', serif;
+			font-size: 100px;
+			color: #404040;
+			text-align: center;
+		}
+		.nav {
+			display: grid;
+			grid-template-columns: repeat(7, minmax(0, 1fr));
+		}
+		.filter-btn {
+			cursor: pointer;
+			background-color: #404040;
+			font-size: 30px;
+			border-radius: 15px;
+			border-width: 0px;
+			margin: 2px;
+			font-family: 'Sofia', cursive;
+			color: #bfa795;
+			padding: 2px;
+    	}
+		.recipe-card {
+			padding: px;
+			border-radius: 15px;
+			background-color: #404040;
+			display: none; /* Initially hide all recipe cards */
+			text-align: center;
+			font-size: 30px;
+			font-family: 'Single Day', cursive;
+			max-width: 50%;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 10px;
+			margin-top: 10px;
+			color: #bfa795;
+		}
+		.space {
+			height: 100px;
+		}
+		.recipedetails {
+			font-size: 16px;
+		}
+		
+		@media screen and (max-width: 1330px) {
+			.nav {
+				grid-template-columns: repeat(auto-fill, minmax(calc(50% - 0px), 1fr));
+			}
+			.nav-content:first-child {
+				grid-column: span 2; /* Make the last box span full width */
+			}
+			.recipe-card {
+				max-width: 70%;
+			}
+		}
+		@media screen and (max-width: 630px) {
+			body {
+				padding-left: 2%;
+				padding-right: 2%;
+			}
+			.homepagetitle {
+				font-size: 50px;
+			}
+			.filter-btn {
+				font-size: 28px;
+			}
+			.recipe-card {
+				max-width: 100%;
+				font-size: 28px;
+			}
+		}
+		@media screen and (max-width: 430px) {
+			.filter-btn {
+				font-size: 20px;
+			}
+			.recipe-card {
+				font-size: 20px;
+			}
+			.recipedetails {
+			font-size: 13px;
+		}
+		}
+		@media screen and (max-width: 320px) {
+			.homepagetitle {
+				font-size: 30px;
+			}
+		}
+	</style>
+
 <body>
-  <div id="header"></div>
-  <main>
-    <h1>Welcome to Example Website</h1>
-    <p>This is the homepage where you can introduce your site.</p>
-  </main>
-  <div id="footer"></div>
-  <script src="js/script.js"></script>
+	<div class="header">
+		<div class="homepagetitle" onClick="">RAVEARN RECIPES</div>
+	</div>
+		<div class="nav" id="filters">
+			<button class="filter-btn nav-content" onclick="filterRecipes('all')">All</button>
+			<button class="filter-btn" onclick="filterRecipes('breakfast')">Breakfast</button>
+			<button class="filter-btn" onclick="filterRecipes('lunch')">Lunch</button>
+			<button class="filter-btn" onclick="filterRecipes('dinner')">Dinner</button>
+			<button class="filter-btn" onclick="filterRecipes('pudding')">Pudding</button>
+			<button class="filter-btn" onclick="filterRecipes('baking')">Baking</button>
+			<button class="filter-btn" onclick="filterRecipes('drinks')">Drinks</button>
+		</div>
+	<hr>
+	
+	
+	
+	
+	<div id="recipes">
+		<a class="" href="https://www.ravearnrecipes.co.uk/recipes/pancakes">
+			<div class="recipe-card" data-categories="pudding 30mins" onClick="">
+				<p>Easy Pancakes</p>
+				<p class="recipedetails">A tasty treat</p>
+				<p class="recipedetails">Prep 10mins - Cook 20mins</p>
+			</div>
+		</a>
+		<a class="" href="https://www.ravearnrecipes.co.uk/recipes/chicken-pesto-pasta">
+			<div class="recipe-card" data-categories="dinner lunch">
+				<p>Chicken and Pesto Pasta</p>
+				<p class="recipedetails">Yummy and filling quick dish</p>
+				<p class="recipedetails">Prep 10mins - Cook 10mins</p>
+			</div>
+		</a>
+		<a class="" href="https://www.ravearnrecipes.co.uk/recipes/jambalaya">
+			<div class="recipe-card" data-categories="lunch dinner">
+				<p>Jambalaya</p>
+				<p class="recipedetails">Tasty mix of chorizo, chicken, rice and veg</p>
+				<p class="recipedetails">Prep 20mins - Cook 45mins</p>
+			</div>
+		</a>
+		<a class="" href="https://www.ravearnrecipes.co.uk/recipes/raclette">
+			<div class="recipe-card" data-categories="lunch dinner">
+				<p>Raclette</p>
+				<p class="recipedetails">Baby Potatoes, cheese and your selection of toppings</p>
+				<p class="recipedetails">Prep 20 mins - Cook 1hour 30mins</p>
+			</div>
+		</a>
+		<a class="" href="https://www.ravearnrecipes.co.uk/recipes/raclette-pudding">
+			<div class="recipe-card" data-categories="pudding">
+				<p>Raclette - Pudding</p>
+				<p class="recipedetails">Chocolate, fruit, doughnuts, whats more to like</p>
+				<p class="recipedetails">Prep 10mins - Cook 30mins</p>
+			</div>
+		</a>
+		<a class="" href="https://www.ravearnrecipes.co.uk/recipes/tortelloni-with-creamy-tomato-sauce-and-spinach">
+			<div class="recipe-card" data-categories="lunch dinner">
+				<p>Tortelloni with Creamy Tomato Sauce and Spinach</p>
+				<p class="recipedetails">Quick, simple and really tasty dish which you can rustle up in 10 mins</p>
+				<p class="recipedetails">Prep 5mins - Cook 5mins</p>
+			</div>
+		</a>
+		<a class="" href="https://www.ravearnrecipes.co.uk/recipes/bbq-halloumi-chicken-pasta">
+			<div class="recipe-card" data-categories="lunch dinner">
+				<p>BBQ Halloumi Chicken Pasta</p>
+				<p class="recipedetails">Creamy, sweet and tangy all at once. Plus it is a super easy recipe to throw together</p>
+				<p class="recipedetails">Prep 10mins - Cook 30mins</p>
+			</div>
+		</a>
+		<a class="" href="https://www.ravearnrecipes.co.uk/recipes/haddock-and-cauliflower-cheese">
+			<div class="recipe-card" data-categories="lunch dinner">
+				<p>Haddock and Cauliflower Cheese</p>
+				<p class="recipedetails">Combine the flavours of fish pie and cauliflower cheese and you get this wonderful dish from Mary Berry! A hearty gratin that's a real winter wamer</p>
+				<p class="recipedetails">Prep 30mins - Cook 30-60mins</p>
+			</div>
+		</a>
+			
+	</div>
+	
+	
+	
+	
+  <script>
+    function filterRecipes(category) {
+      const recipeCards = document.querySelectorAll('.recipe-card');
+
+      recipeCards.forEach(card => {
+        const cardCategories = card.getAttribute('data-categories').split(' ');
+
+        if (category === 'all' || cardCategories.includes(category)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      sortRecipesAlphabetically(); // Sort recipes alphabetically after filtering
+    }
+
+    function sortRecipesAlphabetically() {
+        const recipesContainer = document.getElementById('recipes');
+        const recipeCards = Array.from(recipesContainer.children);
+
+        recipeCards.sort((a, b) => {
+            const recipeNameA = a.textContent.trim().toUpperCase();
+            const recipeNameB = b.textContent.trim().toUpperCase();
+
+            if (recipeNameA < recipeNameB) {
+                return -1;
+            }
+            if (recipeNameA > recipeNameB) {
+                return 1;
+            }
+            return 0;
+        });
+
+        recipeCards.forEach(card => recipesContainer.appendChild(card));
+    }
+	function goBack() {
+  	window.history.back();
+	}
+	</script>
+<br>
+<br>
+<br>
 </body>
 </html>
