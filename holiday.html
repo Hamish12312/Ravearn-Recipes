@@ -1,42 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Surprise Scratch Card</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Surprise Getaway Reveal</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
       height: 100%;
-      font-family: sans-serif;
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #fff;
     }
     #container {
       position: relative;
       width: 100vw;
       height: 100vh;
-      background: #fff;
     }
     #message {
       position: absolute;
       width: 100%;
       height: 100%;
-      background: url('https://source.unsplash.com/1600x900/?beach,travel') center/cover no-repeat;
+      background: url('https://source.unsplash.com/1600x900/?travel,airbnb') center/cover no-repeat;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
       color: white;
-      font-size: 2em;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
       z-index: 1;
     }
+    #message img {
+      width: 80px;
+      margin-bottom: 20px;
+    }
+    #message h1 {
+      font-size: 1.8em;
+      margin: 0 0 20px;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    }
     #message a {
+      display: inline-block;
+      background-color: #FF5A5F;
       color: white;
-      background: rgba(0,0,0,0.4);
-      padding: 10px 20px;
-      border-radius: 10px;
+      font-size: 1.2em;
+      padding: 14px 28px;
+      border-radius: 30px;
       text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
     canvas {
       position: absolute;
@@ -50,7 +64,9 @@
 <body>
   <div id="container">
     <div id="message">
-      <a href="https://www.airbnb.com/rooms/YOUR_BOOKING_ID_HERE" target="_blank">🎁 Click here to reveal your surprise trip!</a>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_Bélo.svg" alt="Airbnb Logo">
+      <h1>Scratch to reveal your surprise getaway! 🌍✈️</h1>
+      <a href="https://www.airbnb.com/rooms/YOUR_BOOKING_ID_HERE" target="_blank">View Your Airbnb Stay</a>
     </div>
     <canvas id="scratchCanvas"></canvas>
   </div>
@@ -64,7 +80,7 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = '#c0c0c0';
+      ctx.fillStyle = '#d1d1d1';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.globalCompositeOperation = 'destination-out';
     }
@@ -83,15 +99,13 @@
       const x = e.touches ? e.touches[0].clientX : e.clientX;
       const y = e.touches ? e.touches[0].clientY : e.clientY;
       ctx.beginPath();
-      ctx.arc(x, y, 30, 0, Math.PI * 2);
+      ctx.arc(x, y, 35, 0, Math.PI * 2);
       ctx.fill();
 
       if (getScratchPercentage() > 60) {
         canvas.style.transition = 'opacity 1s';
         canvas.style.opacity = 0;
-        setTimeout(() => {
-          canvas.remove();
-        }, 1000);
+        setTimeout(() => canvas.remove(), 1000);
       }
     }
 
