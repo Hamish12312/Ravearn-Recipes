@@ -1,160 +1,162 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Surprise Getaway Reveal</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      height: 100%;
-      font-family: 'Helvetica Neue', sans-serif;
-      background-color: #fff;
-    }
-    #container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-    }
-    #message {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: url('https://source.unsplash.com/1600x900/?travel,airbnb') center/cover no-repeat;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      box-sizing: border-box;
-      text-align: center;
-      color: white;
-      z-index: 1;
-    }
-    #message img {
-      width: 80px;
-      margin-bottom: 20px;
-    }
-    #message a {
-      display: inline-block;
-      background-color: #FF5A5F;
-      color: white;
-      font-size: 1.2em;
-      padding: 14px 28px;
-      border-radius: 30px;
-      text-decoration: none;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Surprise Getaway Reveal</title>
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                height: 100%;
+                font-family: "Helvetica Neue", sans-serif;
+                background-color: #fff;
+            }
+            #container {
+                position: relative;
+                width: 100vw;
+                height: 100vh;
+            }
+            #message {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: url("https://source.unsplash.com/1600x900/?travel,airbnb") center/cover no-repeat;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+                box-sizing: border-box;
+                text-align: center;
+                color: white;
+                z-index: 1;
+            }
+            #message img {
+                width: 80px;
+                margin-bottom: 20px;
+            }
+            #message a {
+                display: inline-block;
+                background-color: #ff5a5f;
+                color: white;
+                font-size: 1.2em;
+                padding: 14px 28px;
+                border-radius: 30px;
+                text-decoration: none;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            }
 
-    #overlayText {
-      position: absolute;
-      top: 30px;
-      width: 100%;
-      text-align: center;
-      font-size: 1.6em;
-      font-weight: bold;
-      color: #FF5A5F;
-      z-index: 3;
-      pointer-events: none;
-      transition: opacity 0.5s ease;
-    }
+            #overlayText {
+                position: absolute;
+                top: 30px;
+                width: 100%;
+                text-align: center;
+                font-size: 1.6em;
+                font-weight: bold;
+                color: #ff5a5f;
+                z-index: 3;
+                pointer-events: none;
+                transition: opacity 0.5s ease;
+            }
 
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 2;
-      touch-action: none;
-    }
-  </style>
-</head>
-<body>
-  <div id="container">
-    <div id="overlayText">Scratch To Reveal</div>
+            canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
+                touch-action: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="overlayText">Scratch To Reveal</div>
 
-    <div id="message">
-      <a href="fake.html" target="_blank"></a>
-    </div>
+            <div id="message">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_Bélo.svg" alt="Airbnb Logo" />
+                <a href="fake.html" target="_blank"></a>
+            </div>
 
-    <canvas id="scratchCanvas"></canvas>
-  </div>
+            <canvas id="scratchCanvas"></canvas>
+        </div>
 
-  <script>
-    const canvas = document.getElementById('scratchCanvas');
-    const ctx = canvas.getContext('2d');
-    const overlayText = document.getElementById('overlayText');
+        <script>
+            const canvas = document.getElementById("scratchCanvas");
+            const ctx = canvas.getContext("2d");
+            const overlayText = document.getElementById("overlayText");
 
-    let isDrawing = false;
-    let scratchedOnce = false;
-    let lastX = null;
-    let lastY = null;
+            let isDrawing = false;
+            let scratchedOnce = false;
+            let lastX = null;
+            let lastY = null;
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = '#d1d1d1';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.globalCompositeOperation = 'destination-out';
-    }
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                ctx.globalCompositeOperation = "source-over";
+                ctx.fillStyle = "#d1d1d1";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.globalCompositeOperation = "destination-out";
+            }
 
-    function getScratchPercentage() {
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      let scratched = 0;
-      for (let i = 0; i < imgData.data.length; i += 4) {
-        if (imgData.data[i + 3] < 128) scratched++;
-      }
-      return scratched / (canvas.width * canvas.height) * 100;
-    }
+            function getScratchPercentage() {
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                let scratched = 0;
+                for (let i = 0; i < imgData.data.length; i += 4) {
+                    if (imgData.data[i + 3] < 128) scratched++;
+                }
+                return (scratched / (canvas.width * canvas.height)) * 100;
+            }
 
-    function draw(e) {
-      if (!isDrawing) return;
+            function draw(e) {
+                if (!isDrawing) return;
 
-      const x = e.touches ? e.touches[0].clientX : e.clientX;
-      const y = e.touches ? e.touches[0].clientY : e.clientY;
+                const x = e.touches ? e.touches[0].clientX : e.clientX;
+                const y = e.touches ? e.touches[0].clientY : e.clientY;
 
-      if (!scratchedOnce) {
-        scratchedOnce = true;
-        overlayText.style.opacity = 0;
-      }
+                if (!scratchedOnce) {
+                    scratchedOnce = true;
+                    overlayText.style.opacity = 0;
+                }
 
-      ctx.beginPath();
-      ctx.moveTo(lastX ?? x, lastY ?? y);
-      ctx.lineTo(x, y);
-      ctx.lineWidth = 70;
-      ctx.lineCap = 'round';
-      ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(lastX ?? x, lastY ?? y);
+                ctx.lineTo(x, y);
+                ctx.lineWidth = 70;
+                ctx.lineCap = "round";
+                ctx.stroke();
 
-      lastX = x;
-      lastY = y;
+                lastX = x;
+                lastY = y;
 
-      if (getScratchPercentage() > 60) {
-        canvas.style.transition = 'opacity 1s';
-        canvas.style.opacity = 0;
-        setTimeout(() => canvas.remove(), 1000);
-      }
-    }
+                if (getScratchPercentage() > 60) {
+                    canvas.style.transition = "opacity 1s";
+                    canvas.style.opacity = 0;
+                    setTimeout(() => canvas.remove(), 1000);
+                }
+            }
 
-    canvas.addEventListener('mousedown', () => isDrawing = true);
-    canvas.addEventListener('mouseup', () => {
-      isDrawing = false;
-      lastX = null;
-      lastY = null;
-    });
-    canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener("mousedown", () => (isDrawing = true));
+            canvas.addEventListener("mouseup", () => {
+                isDrawing = false;
+                lastX = null;
+                lastY = null;
+            });
+            canvas.addEventListener("mousemove", draw);
 
-    canvas.addEventListener('touchstart', () => isDrawing = true);
-    canvas.addEventListener('touchend', () => {
-      isDrawing = false;
-      lastX = null;
-      lastY = null;
-    });
-    canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener("touchstart", () => (isDrawing = true));
+            canvas.addEventListener("touchend", () => {
+                isDrawing = false;
+                lastX = null;
+                lastY = null;
+            });
+            canvas.addEventListener("touchmove", draw);
 
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-  </script>
-</body>
+            window.addEventListener("resize", resizeCanvas);
+            resizeCanvas();
+        </script>
+    </body>
 </html>
