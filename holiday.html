@@ -37,11 +37,6 @@
       width: 80px;
       margin-bottom: 20px;
     }
-    #message h1 {
-      font-size: 1.8em;
-      margin: 0 0 20px;
-      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
-    }
     #message a {
       display: inline-block;
       background-color: #FF5A5F;
@@ -52,6 +47,20 @@
       text-decoration: none;
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
+
+    #overlayText {
+      position: absolute;
+      top: 30px;
+      width: 100%;
+      text-align: center;
+      font-size: 1.6em;
+      font-weight: bold;
+      color: #FF5A5F;
+      text-shadow: 1px 1px 5px rgba(255,255,255,0.8);
+      z-index: 3;
+      pointer-events: none;
+    }
+
     canvas {
       position: absolute;
       top: 0;
@@ -63,18 +72,22 @@
 </head>
 <body>
   <div id="container">
+    <div id="overlayText" id="instruction">👉 Scratch to reveal your surprise getaway!</div>
+
     <div id="message">
       <img src="https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_Bélo.svg" alt="Airbnb Logo">
-      <h1>Scratch to reveal your surprise getaway! 🌍✈️</h1>
       <a href="https://www.airbnb.com/rooms/YOUR_BOOKING_ID_HERE" target="_blank">View Your Airbnb Stay</a>
     </div>
+
     <canvas id="scratchCanvas"></canvas>
   </div>
 
   <script>
     const canvas = document.getElementById('scratchCanvas');
     const ctx = canvas.getContext('2d');
+    const overlayText = document.getElementById('overlayText');
     let isDrawing = false;
+    let scratchedOnce = false;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -101,6 +114,11 @@
       ctx.beginPath();
       ctx.arc(x, y, 35, 0, Math.PI * 2);
       ctx.fill();
+
+      if (!scratchedOnce) {
+        scratchedOnce = true;
+        overlayText.style.opacity = 0;
+      }
 
       if (getScratchPercentage() > 60) {
         canvas.style.transition = 'opacity 1s';
