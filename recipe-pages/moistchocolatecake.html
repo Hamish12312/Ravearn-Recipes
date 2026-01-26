@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredericka+the+Great&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300&display=swap" rel="stylesheet">
+<title>Moist Chocolate Cake</title>
+<style>
+    body {
+        padding-left: 10%;
+        padding-right: 10%;
+        padding-bottom: 15%;
+        height: 100%;
+        background: #bfa795;
+    }
+    p {
+        margin: 0px;
+    }
+    a {
+        color: inherit; /* Inherit color from parent */
+        text-decoration: none; /* Remove underline */
+    }
+    hr {
+        border-top: 6px dotted #404040;
+        border-bottom: 0px;
+        border-left: 0px;
+        border-right: 0px;
+        height: auto;
+    }
+    img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0px;
+        width: 70%;
+        height: auto;
+        max-width: 600px;
+        border-style: solid;
+        border-width: 5px;
+        border-color: #404040;
+    }
+    .header {
+        display: grid;
+        grid-template-columns: auto;
+        padding: 0px;
+        line-height: 0.9;
+    }
+    .homepagetitle {
+        font-family: 'Fredericka the Great', serif;
+        font-size: 100px;
+        color: #404040;
+        text-align: center;
+    }
+    .recipetitle {
+        text-align: center;
+        font-family: 'Lato', sans-serif;
+        font-size: 20px;
+        text-decoration-line: underline;
+        text-decoration-thickness: auto;
+        color: #404040;
+    }
+    .quantity {
+        text-align: center;
+        font-family: 'Lato', sans-serif;
+        color: #404040;
+    }
+    .ingredients {
+        font-family: 'Lato', sans-serif;
+    }
+    ul.a {
+        font-family: 'Lato', sans-serif;
+        text-align: center;
+        list-style-position: inside; /* Adjust bullet position */
+        padding-left: 0; /* Remove default padding */
+        color: #404040;
+    }
+    ol.b {
+        font-family: 'Lato', sans-serif;
+        text-align: center;
+        list-style-position: inside; /* Adjust bullet position */
+        padding-left: 0; /* Remove default padding */
+        color: #404040;
+    }
+    ol.a {
+        font-family: 'Lato', sans-serif;
+        text-align: center;
+        list-style-position: inside; /* Adjust bullet position */
+        padding-left: 0; /* Remove default padding */
+        color: #404040;
+    }
+    .source {
+        text-align: left;
+        font-family: 'Lato', sans-serif;
+        font-size: 15px;
+        color: #404040;
+		padding-bottom: 80px;
+    }
+    .download-link {
+        background-color: #404040;
+        color: #bca899;
+        padding: 10px;
+        text-decoration-line: underline;
+
+    }
+
+
+    @media screen and (max-width: 1330px) {
+        img {
+            width: 90%;
+        }
+    }
+    @media screen and (max-width: 630px) {
+        body {
+            padding-left: 2%;
+            padding-right: 2%;
+        }
+        .homepagetitle {
+            font-size: 50px;
+        }
+    }
+    @media screen and (max-width: 430px) {
+    }
+    @media screen and (max-width: 320px) {
+        .homepagetitle {
+            font-size: 30px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="header">
+	<a href="https://www.ravearnrecipes.co.uk"><div class="homepagetitle">RAVEARN RECIPES</div></a>
+</div>
+<hr>
+<img src="https://www.allrecipes.com/thmb/lJ6N7CwWKjWl0bJ45dz2a6ALPAo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/ALR-what-is-raclette-VAT-4x3-01-4c9df4e71ce644519cbc494e25196969.jpg" alt=""/>
+<hr>
+<p class="recipetitle">Raclette</p>
+<br>
+<p class="quantity">Serves 10 - Prep 20mins - Cook 1hour 30mins</p>
+<ul class="a">
+  	<li>225g Plain Flour</li>
+    <li>350g Caster Sugar</li>
+    <li>85g Cocoa Powder</li>
+	<li>1 1/2 tsp Baking Powder</li>
+	<li>1 1/2 tsp Bicarbonate of Soda </li>
+	<li>2 Eggs</li>
+	<li>2 tsp Vanilla Extract</li>
+	<li>125ml Vegitable Oil</li>
+	<li>250ml Milk</li>
+    <li>250ml Boiling Water</li>
+    <br>
+    <a id="download-link" class="download-link" href="#" download="ingredients_list.txt">Download Ingredients List</a>
+</ul>
+<hr>
+<p class="recipetitle">Method</p>
+<ol class="b">
+    <li>Place all ingredients except boiling water into a bowl.</li>
+	<br>
+    <li>Beat together until smooth.</li>
+	<br>
+    <li>Add the boiling water a little at a time.</li>
+	<br>
+	<li>Beat well, this will be very liquid.</li>
+	<br>
+	<li>Pour into tins and bake for 25-35mins, 20mins for cupcakes</li>
+</ol>
+<hr>
+<p class="source">Source: <a href="www.ravearnrecipes.co.uk">Ravearn Recipes</a></p>
+<br>
+<br>
+<br>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var recipeTitle = document.querySelector('.recipetitle').textContent.trim();
+    var ingredients = document.querySelectorAll('.a li');
+    var shoppingList = 'Shopping List for ' + recipeTitle + ':\n';
+    ingredients.forEach(function(ingredient, index) {
+        shoppingList += (index + 1) + '. ' + ingredient.textContent + '\n';
+    });
+    var downloadLink = document.getElementById('download-link');
+    downloadLink.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(shoppingList);
+    downloadLink.download = recipeTitle.replace(/\s+/g, '_').toLowerCase() + '_ingredients.txt';
+});
+</script>
+</body>
+</html>
