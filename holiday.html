@@ -43,6 +43,7 @@
       top: 0;
       left: 0;
       z-index: 2;
+      touch-action: none;
     }
   </style>
 </head>
@@ -62,13 +63,19 @@
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      drawMask();
-    }
-
-    function drawMask() {
+      ctx.globalCompositeOperation = 'source-over';
       ctx.fillStyle = '#c0c0c0';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.globalCompositeOperation = 'destination-out';
+    }
+
+    function getScratchPercentage() {
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let scratched = 0;
+      for (let i = 0; i < imgData.data.length; i += 4) {
+        if (imgData.data[i + 3] < 128) scratched++;
+      }
+      return scratched / (canvas.width * canvas.height) * 100;
     }
 
     function draw(e) {
@@ -78,6 +85,14 @@
       ctx.beginPath();
       ctx.arc(x, y, 30, 0, Math.PI * 2);
       ctx.fill();
+
+      if (getScratchPercentage() > 60) {
+        canvas.style.transition = 'opacity 1s';
+        canvas.style.opacity = 0;
+        setTimeout(() => {
+          canvas.remove();
+        }, 1000);
+      }
     }
 
     canvas.addEventListener('mousedown', () => isDrawing = true);
