@@ -59,6 +59,7 @@
       text-shadow: 1px 1px 5px rgba(255,255,255,0.8);
       z-index: 3;
       pointer-events: none;
+      transition: opacity 0.5s ease;
     }
 
     canvas {
@@ -72,7 +73,7 @@
 </head>
 <body>
   <div id="container">
-    <div id="overlayText" id="instruction">👉 Scratch to reveal your surprise getaway!</div>
+    <div id="overlayText">👉 Scratch to reveal your surprise getaway!</div>
 
     <div id="message">
       <img src="https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_Bélo.svg" alt="Airbnb Logo">
@@ -86,8 +87,11 @@
     const canvas = document.getElementById('scratchCanvas');
     const ctx = canvas.getContext('2d');
     const overlayText = document.getElementById('overlayText');
+
     let isDrawing = false;
     let scratchedOnce = false;
+    let lastX = null;
+    let lastY = null;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -109,16 +113,24 @@
 
     function draw(e) {
       if (!isDrawing) return;
+
       const x = e.touches ? e.touches[0].clientX : e.clientX;
       const y = e.touches ? e.touches[0].clientY : e.clientY;
-      ctx.beginPath();
-      ctx.arc(x, y, 35, 0, Math.PI * 2);
-      ctx.fill();
 
       if (!scratchedOnce) {
         scratchedOnce = true;
         overlayText.style.opacity = 0;
       }
+
+      ctx.beginPath();
+      ctx.moveTo(lastX ?? x, lastY ?? y);
+      ctx.lineTo(x, y);
+      ctx.lineWidth = 70;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      lastX = x;
+      lastY = y;
 
       if (getScratchPercentage() > 60) {
         canvas.style.transition = 'opacity 1s';
@@ -128,11 +140,19 @@
     }
 
     canvas.addEventListener('mousedown', () => isDrawing = true);
-    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mouseup', () => {
+      isDrawing = false;
+      lastX = null;
+      lastY = null;
+    });
     canvas.addEventListener('mousemove', draw);
 
     canvas.addEventListener('touchstart', () => isDrawing = true);
-    canvas.addEventListener('touchend', () => isDrawing = false);
+    canvas.addEventListener('touchend', () => {
+      isDrawing = false;
+      lastX = null;
+      lastY = null;
+    });
     canvas.addEventListener('touchmove', draw);
 
     window.addEventListener('resize', resizeCanvas);
