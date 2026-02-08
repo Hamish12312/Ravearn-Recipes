@@ -66,7 +66,7 @@
 
     <textarea id="summary" placeholder="Your summary will appear here..."></textarea>
     <button onclick="copySummary()">📋 Copy to Clipboard</button>
-    <button onclick="sendSMS()">📱 Text This To Me</button>
+    <button onclick="sendWhatsApp()">💬 Send via WhatsApp</button>
 
     <script>
       const items = [
@@ -144,16 +144,16 @@
         alert("Summary copied to clipboard! 📋");
       }
 
-      function sendSMS() {
+      function sendWhatsApp() {
         const summary = document.getElementById("summary").value;
         if (!summary.trim()) {
           alert("Please calculate your total first!");
           return;
         }
         const encoded = encodeURIComponent(summary);
-        const yourNumber = "447123456789"; // <-- Replace with your real number
-        const smsLink = `sms:${yourNumber}?body=${encoded}`;
-        window.location.href = smsLink;
+        const yourNumber = "447123456789"; // 👈 Replace with your WhatsApp number
+        const waLink = `https://wa.me/${yourNumber}?text=${encoded}`;
+        window.open(waLink, "_blank");
       }
 
       renderItems();
