@@ -66,6 +66,7 @@
 
     <textarea id="summary" placeholder="Your summary will appear here..."></textarea>
     <button onclick="copySummary()">📋 Copy to Clipboard</button>
+    <button onclick="sendSMS()">📱 Text This To Me</button>
 
     <script>
       const items = [
@@ -103,9 +104,9 @@
           const div = document.createElement("div");
           div.className = "item";
           div.innerHTML = `
-      <label><input type="checkbox" value="${index}"> ${item.name}</label>
-      <span>£${item.price.toFixed(2)}</span>
-    `;
+            <label><input type="checkbox" value="${index}"> ${item.name}</label>
+            <span>£${item.price.toFixed(2)}</span>
+          `;
           container.appendChild(div);
         });
       }
@@ -129,7 +130,7 @@
         document.querySelector("#totals div:nth-child(3) strong").innerText = `£${total.toFixed(2)}`;
 
         const summary =
-          `Hey! Based on what you selected (${selected.map((i) => i.name).join(", ")}),\n` +
+          `Hey! Based on what I selected (${selected.map((i) => i.name).join(", ")}),\n` +
           `Subtotal: £${subtotal.toFixed(2)}\nTip (10%): £${tip.toFixed(2)}\n` +
           `Total to pay: £${total.toFixed(2)}\nThanks! 😊`;
 
@@ -141,6 +142,18 @@
         summary.select();
         document.execCommand("copy");
         alert("Summary copied to clipboard! 📋");
+      }
+
+      function sendSMS() {
+        const summary = document.getElementById("summary").value;
+        if (!summary.trim()) {
+          alert("Please calculate your total first!");
+          return;
+        }
+        const encoded = encodeURIComponent(summary);
+        const yourNumber = "447123456789"; // <-- Replace with your real number
+        const smsLink = `sms:${yourNumber}?body=${encoded}`;
+        window.location.href = smsLink;
       }
 
       renderItems();
