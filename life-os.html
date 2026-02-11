@@ -1,0 +1,1798 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Life OS — Structural Life Modeling Engine</title>
+  <style>
+    :root{
+      --bg:#0b1222; --panel:#0f1b33; --panel2:#0c1730; --line:#1d315c;
+      --text:#eaf0ff; --muted:#9cb2da; --accent:#38bdf8; --good:#34d399; --warn:#fbbf24; --bad:#fb7185;
+      --chip:#122449; --chip2:#0f2a3b;
+      --shadow: 0 14px 40px rgba(0,0,0,.35);
+      --radius: 14px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background: radial-gradient(1200px 800px at 20% 0%, #162a55 0%, var(--bg) 45%, #070b14 100%);
+      color:var(--text);
+    }
+    .wrap{max-width:1100px; margin:24px auto; padding:0 16px 60px}
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(145deg, #5eead4, #38bdf8, #a78bfa);
+      box-shadow: var(--shadow);
+    }
+    h1{margin:0; font-size:20px; letter-spacing:.2px}
+    .tagline{margin:2px 0 0; color:var(--muted); font-size:12px}
+    .top-actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    button, .btn{
+      appearance:none; border:none; cursor:pointer;
+      background: linear-gradient(180deg, #2bb8ff, #0ea5e9);
+      color:#06101b; font-weight:800; letter-spacing:.2px;
+      padding:10px 12px; border-radius:12px;
+      box-shadow: 0 10px 24px rgba(14,165,233,.25);
+      transition: transform .12s ease, filter .12s ease;
+      font-size:13px;
+    }
+    button:hover, .btn:hover{transform: translateY(-1px); filter:brightness(1.03)}
+    button.secondary, .btn.secondary{
+      background: linear-gradient(180deg, #15294f, #0f1b33);
+      color:var(--text);
+      border:1px solid var(--line);
+      box-shadow:none;
+      font-weight:700;
+    }
+    button.ghost, .btn.ghost{
+      background: transparent;
+      color: var(--text);
+      border: 1px dashed #2a4278;
+      box-shadow:none;
+      font-weight:700;
+    }
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:8px 10px; border-radius:999px;
+      background: rgba(15,27,51,.7);
+      border: 1px solid rgba(29,49,92,.8);
+      color: var(--muted);
+      font-size:12px;
+    }
+    .pill strong{color:var(--text); font-weight:800}
+    .grid{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap:14px;
+      margin-top:12px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+    nav{
+      background: rgba(15,27,51,.62);
+      border:1px solid rgba(29,49,92,.85);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:10px;
+      position:sticky; top:12px;
+      height: fit-content;
+      backdrop-filter: blur(10px);
+    }
+    .navbtn{
+      width:100%;
+      text-align:left;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 10px;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid transparent;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:700;
+    }
+    .navbtn:hover{background: rgba(56,189,248,.08); border-color: rgba(56,189,248,.12)}
+    .navbtn.active{
+      background: rgba(56,189,248,.12);
+      border-color: rgba(56,189,248,.26);
+    }
+    .navmeta{color:var(--muted); font-size:12px; font-weight:700}
+    main{
+      background: rgba(15,27,51,.62);
+      border:1px solid rgba(29,49,92,.85);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:14px;
+      backdrop-filter: blur(10px);
+      min-height: 600px;
+    }
+    .panel{
+      background: rgba(12,23,48,.65);
+      border: 1px solid rgba(29,49,92,.75);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .panel h2{margin:0 0 10px; font-size:14px}
+    .row{
+      display:grid; grid-template-columns: 1fr 1fr; gap:10px;
+    }
+    @media (max-width: 720px){ .row{grid-template-columns:1fr} }
+    label{display:block; font-size:12px; color:var(--muted); margin: 8px 0 6px}
+    input, select, textarea{
+      width:100%;
+      padding:10px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(29,49,92,.95);
+      background: rgba(9,16,32,.65);
+      color: var(--text);
+      outline:none;
+      font-size:13px;
+    }
+    textarea{min-height: 84px; resize: vertical}
+    .muted{color:var(--muted)}
+    .small{font-size:12px}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{
+      display:inline-flex; gap:6px; align-items:center;
+      background: rgba(18,36,73,.75);
+      border:1px solid rgba(29,49,92,.85);
+      padding:8px 10px;
+      border-radius: 999px;
+      font-size:12px;
+      color: var(--text);
+    }
+    .chip .k{color:var(--muted); font-weight:800}
+    .metrics{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+    @media (max-width: 860px){ .metrics{grid-template-columns: repeat(2, 1fr)} }
+    @media (max-width: 520px){ .metrics{grid-template-columns: 1fr} }
+    .metric{
+      background: rgba(9,16,32,.55);
+      border: 1px solid rgba(29,49,92,.75);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .metric .t{color:var(--muted); font-size:12px; font-weight:800}
+    .metric .v{font-size:22px; font-weight:900; margin-top:6px}
+    .metric .s{color:var(--muted); font-size:12px; margin-top:4px}
+    .bar{
+      height: 10px; border-radius: 999px;
+      background: rgba(29,49,92,.55);
+      overflow:hidden; margin-top:10px;
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--bad), var(--warn), var(--good));
+      border-radius: 999px;
+      transition: width .25s ease;
+    }
+    .table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 14px;
+      border:1px solid rgba(29,49,92,.75);
+      background: rgba(9,16,32,.45);
+    }
+    .table th, .table td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(29,49,92,.55);
+      font-size:12px;
+      text-align:left;
+    }
+    .table th{color:var(--muted); font-weight:900}
+    .table tr:last-child td{border-bottom:none}
+    .right{text-align:right}
+    .flex{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .split{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 11px;
+      border: 1px solid rgba(29,49,92,.85);
+      background: rgba(9,16,32,.55);
+      padding: 4px 8px;
+      border-radius: 10px;
+      color: var(--muted);
+    }
+    canvas{width:100%; height: 210px; border-radius:14px; background: rgba(9,16,32,.35); border:1px solid rgba(29,49,92,.55)}
+    .danger{color: var(--bad); font-weight:900}
+    .warn{color: var(--warn); font-weight:900}
+    .good{color: var(--good); font-weight:900}
+    .hr{height:1px; background: rgba(29,49,92,.65); margin: 12px 0}
+    .toast{
+      position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+      background: rgba(6,12,22,.92);
+      border: 1px solid rgba(56,189,248,.25);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      display:none;
+      max-width: 92vw;
+      font-size: 13px;
+    }
+    .hint{color: var(--muted); font-size:12px; margin-top:6px; line-height:1.35}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>Life OS <span class="muted">— Structural Life Modeling Engine</span></h1>
+        <div class="tagline">Deterministic. Persistent. Quantified. Visual. Goal-anchored.</div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <span class="pill" id="pillStatus"><strong>Unlocked</strong> · Local-only</span>
+      <button class="secondary" id="btnLock">Lock / Encrypt</button>
+      <button class="secondary" id="btnExport">Export</button>
+      <button class="secondary" id="btnImport">Import</button>
+      <button class="ghost" id="btnReset">Reset</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <nav>
+      <button class="navbtn active" data-view="dashboard">Dashboard <span class="navmeta" id="navDash">↗</span></button>
+      <button class="navbtn" data-view="setup">Setup <span class="navmeta" id="navSetup">Goals</span></button>
+      <button class="navbtn" data-view="log">Log <span class="navmeta" id="navLog">Today</span></button>
+      <button class="navbtn" data-view="sim">Simulator <span class="navmeta" id="navSim">What-if</span></button>
+      <button class="navbtn" data-view="insights">Insights <span class="navmeta" id="navInsights">Drift</span></button>
+      <div class="hr"></div>
+      <div class="hint">
+        Tips: Quick add → press <span class="kbd">Ctrl</span>+<span class="kbd">Enter</span> in the Log note box.<br/>
+        Everything stores locally in your browser.
+      </div>
+    </nav>
+
+    <main>
+      <!-- DASHBOARD -->
+      <section id="view-dashboard" class="view">
+        <div class="panel">
+          <div class="split">
+            <h2>Today’s Operating State</h2>
+            <div class="chips" id="dashChips"></div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric">
+              <div class="t">Alignment</div>
+              <div class="v" id="mAlign">—</div>
+              <div class="s" id="mAlignS">Declared vs actual allocation.</div>
+              <div class="bar"><div id="barAlign"></div></div>
+            </div>
+            <div class="metric">
+              <div class="t">Drift (7d)</div>
+              <div class="v" id="mDrift">—</div>
+              <div class="s" id="mDriftS">How far behavior is diverging.</div>
+            </div>
+            <div class="metric">
+              <div class="t">Burnout Risk</div>
+              <div class="v" id="mBurn">—</div>
+              <div class="s" id="mBurnS">Energy debt trend + stacking.</div>
+            </div>
+            <div class="metric">
+              <div class="t">Freedom Budget</div>
+              <div class="v" id="mFree">—</div>
+              <div class="s" id="mFreeS">Available hours after constraints.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="split">
+            <h2>Allocation (Last 7 Days)</h2>
+            <div class="muted small">Time and money mapped to goals.</div>
+          </div>
+          <canvas id="chartAlloc" width="1000" height="260"></canvas>
+          <div class="hint">The engine turns “life” into a portfolio. Your goals are the buckets. Your time & money are the assets.</div>
+        </div>
+
+        <div class="panel">
+          <div class="split">
+            <h2>Trajectory (Deterministic Projections)</h2>
+            <div class="muted small">Based on your last 14 days of behavior.</div>
+          </div>
+          <div class="row">
+            <div class="panel" style="margin:0">
+              <h2 style="margin-bottom:6px">1-Year</h2>
+              <div id="proj1y" class="mono small"></div>
+            </div>
+            <div class="panel" style="margin:0">
+              <h2 style="margin-bottom:6px">5-Year</h2>
+              <div id="proj5y" class="mono small"></div>
+            </div>
+          </div>
+          <div class="hint">These are *structural* projections: they don’t “motivate” you — they show what your current allocation *becomes* if repeated.</div>
+        </div>
+      </section>
+
+      <!-- SETUP -->
+      <section id="view-setup" class="view" style="display:none">
+        <div class="panel">
+          <h2>Goals (Intent Model)</h2>
+          <div class="hint">
+            Define up to 5 goals. Assign weights (importance). The engine uses these weights to compute alignment & drift.
+          </div>
+          <div id="goalsWrap"></div>
+          <div class="flex">
+            <button class="secondary" id="btnAddGoal">+ Add Goal</button>
+            <button id="btnSaveSetup">Save Setup</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Constraints (Reality Model)</h2>
+          <div class="row">
+            <div>
+              <label>Weekly total hours available (wake hours)</label>
+              <input type="number" id="setWeeklyHours" min="1" step="1" placeholder="e.g. 112 (16h/day × 7)" />
+              <div class="hint">Typical: 16 wake hours/day → 112 weekly.</div>
+            </div>
+            <div>
+              <label>Weekly non-negotiable hours (work, family, commute, etc.)</label>
+              <input type="number" id="setFixedHours" min="0" step="1" placeholder="e.g. 55" />
+              <div class="hint">This is what you can’t change. The engine models your freedom budget around it.</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Monthly income (for opportunity cost calculations)</label>
+              <input type="number" id="setMonthlyIncome" min="0" step="1" placeholder="e.g. 3000" />
+            </div>
+            <div>
+              <label>Monthly essential expenses (rent, bills, etc.)</label>
+              <input type="number" id="setMonthlyEssentials" min="0" step="1" placeholder="e.g. 1800" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Daily sleep target (hours)</label>
+              <input type="number" id="setSleepHrs" min="0" max="16" step="0.5" placeholder="e.g. 7.5" />
+              <div class="hint">Used in energy debt model.</div>
+            </div>
+            <div>
+              <label>Energy capacity (1–10)</label>
+              <input type="number" id="setEnergyCap" min="1" max="10" step="1" placeholder="e.g. 7" />
+              <div class="hint">Your sustainable daily “output ceiling”.</div>
+            </div>
+          </div>
+
+          <div class="flex">
+            <button id="btnSaveSetup2">Save Setup</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- LOG -->
+      <section id="view-log" class="view" style="display:none">
+        <div class="panel">
+          <div class="split">
+            <h2>Log an Entry</h2>
+            <div class="muted small">Fast capture → deterministic modeling.</div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Date</label>
+              <input type="date" id="logDate" />
+            </div>
+            <div>
+              <label>Type</label>
+              <select id="logType">
+                <option value="time">Time</option>
+                <option value="money">Money</option>
+                <option value="both">Time + Money</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Goal bucket</label>
+              <select id="logGoal"></select>
+            </div>
+            <div>
+              <label>Category (for insights)</label>
+              <select id="logCat">
+                <option value="deep_work">Deep Work</option>
+                <option value="admin">Admin</option>
+                <option value="meeting">Meeting</option>
+                <option value="learning">Learning</option>
+                <option value="health">Health</option>
+                <option value="social">Social</option>
+                <option value="chores">Chores</option>
+                <option value="commute">Commute</option>
+                <option value="leisure">Leisure</option>
+                <option value="scrolling">Scrolling</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Hours (time)</label>
+              <input type="number" id="logHours" min="0" step="0.25" placeholder="e.g. 1.5" />
+            </div>
+            <div>
+              <label>Money (currency)</label>
+              <input type="number" id="logMoney" min="0" step="1" placeholder="e.g. 25" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Energy cost (0–10)</label>
+              <input type="number" id="logEnergy" min="0" max="10" step="1" placeholder="e.g. 7" />
+              <div class="hint">High energy cost entries increase burnout risk if stacked.</div>
+            </div>
+            <div>
+              <label>Quality (0–10)</label>
+              <input type="number" id="logQuality" min="0" max="10" step="1" placeholder="e.g. 8" />
+              <div class="hint">Used for “thriving efficiency” (high quality per unit cost).</div>
+            </div>
+          </div>
+
+          <label>Note (optional)</label>
+          <textarea id="logNote" placeholder="What happened? What mattered? (Ctrl+Enter to save)"></textarea>
+
+          <div class="flex">
+            <button id="btnAddEntry">Add Entry</button>
+            <button class="secondary" id="btnQuickFill">Quick fill: meeting</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="split">
+            <h2>Recent Entries</h2>
+            <div class="flex">
+              <input id="logSearch" placeholder="Filter (goal/category/note)..." />
+              <button class="secondary" id="btnClearFilter">Clear</button>
+            </div>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Date</th><th>Goal</th><th>Cat</th><th class="right">Hours</th><th class="right">Money</th><th class="right">Energy</th><th class="right">Quality</th><th>Note</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="entriesTbody"></tbody>
+          </table>
+          <div class="hint">You’re building a dataset of your life. The value compounds as the model learns your patterns (deterministically).</div>
+        </div>
+      </section>
+
+      <!-- SIMULATOR -->
+      <section id="view-sim" class="view" style="display:none">
+        <div class="panel">
+          <div class="split">
+            <h2>What-If Simulator</h2>
+            <div class="muted small">Instant divergence projection.</div>
+          </div>
+          <div class="hint">
+            Adjust weekly allocations below. The engine will show you how the trajectory changes over 1 and 5 years.
+            This is “life arithmetic”: converting small weekly changes into visible long-term divergence.
+          </div>
+
+          <div id="simWrap"></div>
+
+          <div class="row">
+            <div class="panel" style="margin:0">
+              <h2 style="margin-bottom:6px">Projected impact (1-Year)</h2>
+              <div id="sim1y" class="mono small"></div>
+            </div>
+            <div class="panel" style="margin:0">
+              <h2 style="margin-bottom:6px">Projected impact (5-Year)</h2>
+              <div id="sim5y" class="mono small"></div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <div class="flex">
+            <button class="secondary" id="btnSimReset">Reset to current averages</button>
+            <button id="btnSimApplyAsPlan">Save as Target Plan</button>
+          </div>
+          <div class="hint">“Save as Target Plan” updates your declared target allocations; the engine will then measure alignment against it.</div>
+        </div>
+      </section>
+
+      <!-- INSIGHTS -->
+      <section id="view-insights" class="view" style="display:none">
+        <div class="panel">
+          <div class="split">
+            <h2>Drift & Leverage Insights</h2>
+            <div class="muted small">No advice. Just structural reality.</div>
+          </div>
+
+          <div class="row">
+            <div class="panel" style="margin:0">
+              <h2 style="margin-bottom:6px">Top Leaks (Last 14d)</h2>
+              <div id="insLeaks" class="small"></div>
+            </div>
+            <div class="panel" style="margin:0">
+              <h2 style="margin-bottom:6px">Highest ROI (Quality / Cost)</h2>
+              <div id="insRoi" class="small"></div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <div class="panel" style="margin:0">
+              <h2 style="margin-bottom:6px">Stacking Risk</h2>
+              <div id="insStack" class="small"></div>
+            </div>
+            <div class="panel" style="margin:0">
+              <h2 style="margin-bottom:6px">Opportunity Cost Snapshot</h2>
+              <div id="insOpp" class="small"></div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <h2>Alignment Timeline (30d)</h2>
+          <canvas id="chartAlign" width="1000" height="240"></canvas>
+          <div class="hint">If you want “thriving efficiently”, you need feedback loops. This chart is the loop.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   Life OS — Single File Engine
+   - deterministic modeling
+   - localStorage persistence
+   - optional encryption (AES-GCM)
+   - charts drawn manually (no libraries)
+   ============================================================ */
+
+(() => {
+  const LS_KEY = "lifeos_v1_blob";
+  const LS_ENC = "lifeos_v1_enc"; // stores encrypted payload (base64)
+  const LS_META = "lifeos_v1_meta"; // { encrypted: boolean, salt, iv }
+  const TODAY = () => new Date().toISOString().slice(0,10);
+
+  const $ = (id) => document.getElementById(id);
+
+  const toast = (msg) => {
+    const el = $("toast");
+    el.textContent = msg;
+    el.style.display = "block";
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => el.style.display = "none", 2200);
+  };
+
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const sum = (arr) => arr.reduce((a,b)=>a+b,0);
+  const round = (n, d=2) => Number.isFinite(n) ? +n.toFixed(d) : 0;
+
+  const safeJsonParse = (s, fallback) => {
+    try { return JSON.parse(s); } catch { return fallback; }
+  };
+
+  const b64 = {
+    enc: (buf) => {
+      const bytes = buf instanceof ArrayBuffer ? new Uint8Array(buf) : buf;
+      let bin = "";
+      for (let i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+      return btoa(bin);
+    },
+    dec: (b) => {
+      const bin = atob(b);
+      const bytes = new Uint8Array(bin.length);
+      for (let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+      return bytes;
+    }
+  };
+
+  // ---------- Default model ----------
+  const defaultState = () => ({
+    version: 1,
+    createdAt: Date.now(),
+    setup: {
+      weeklyWakeHours: 112,
+      weeklyFixedHours: 55,
+      monthlyIncome: 0,
+      monthlyEssentials: 0,
+      sleepHours: 7.5,
+      energyCap: 7,
+      goals: [
+        { id: cryptoRandomId(), name: "Career / Output", weight: 3, targetTimePct: 34, targetMoneyPct: 15 },
+        { id: cryptoRandomId(), name: "Health / Body", weight: 3, targetTimePct: 20, targetMoneyPct: 10 },
+        { id: cryptoRandomId(), name: "Wealth / Assets", weight: 2, targetTimePct: 18, targetMoneyPct: 60 },
+        { id: cryptoRandomId(), name: "Relationships", weight: 2, targetTimePct: 18, targetMoneyPct: 10 },
+        { id: cryptoRandomId(), name: "Learning", weight: 1, targetTimePct: 10, targetMoneyPct: 5 },
+      ],
+    },
+    entries: [
+      // {id, date, type, goalId, category, hours, money, energy, quality, note, ts}
+    ],
+    targetPlan: null // { goals: [{id, timePct, moneyPct}] } optional override
+  });
+
+  function cryptoRandomId() {
+    const a = new Uint32Array(2);
+    crypto.getRandomValues(a);
+    return a[0].toString(16) + a[1].toString(16);
+  }
+
+  // ---------- Encryption ----------
+  async function deriveKey(passphrase, saltBytes) {
+    const enc = new TextEncoder();
+    const baseKey = await crypto.subtle.importKey("raw", enc.encode(passphrase), "PBKDF2", false, ["deriveKey"]);
+    return crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt: saltBytes, iterations: 120000, hash: "SHA-256" },
+      baseKey,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt","decrypt"]
+    );
+  }
+
+  async function encryptState(state, passphrase) {
+    const enc = new TextEncoder();
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveKey(passphrase, salt);
+    const plain = enc.encode(JSON.stringify(state));
+    const cipher = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plain);
+    return { cipherB64: b64.enc(cipher), saltB64: b64.enc(salt), ivB64: b64.enc(iv) };
+  }
+
+  async function decryptState(cipherB64, passphrase, saltB64, ivB64) {
+    const dec = new TextDecoder();
+    const salt = b64.dec(saltB64);
+    const iv = b64.dec(ivB64);
+    const key = await deriveKey(passphrase, salt);
+    const cipherBytes = b64.dec(cipherB64);
+    const plainBuf = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, cipherBytes);
+    return safeJsonParse(dec.decode(plainBuf), null);
+  }
+
+  // ---------- Persistence ----------
+  function loadMeta() {
+    return safeJsonParse(localStorage.getItem(LS_META) || "{}", {});
+  }
+
+  function setMeta(m) {
+    localStorage.setItem(LS_META, JSON.stringify(m));
+  }
+
+  function savePlain(state) {
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  }
+
+  function loadPlain() {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    return safeJsonParse(raw, null);
+  }
+
+  async function saveEncrypted(state, passphrase) {
+    const { cipherB64, saltB64, ivB64 } = await encryptState(state, passphrase);
+    localStorage.setItem(LS_ENC, cipherB64);
+    localStorage.removeItem(LS_KEY);
+    setMeta({ encrypted: true, saltB64, ivB64 });
+  }
+
+  function clearAll() {
+    localStorage.removeItem(LS_KEY);
+    localStorage.removeItem(LS_ENC);
+    localStorage.removeItem(LS_META);
+  }
+
+  // ---------- Engine calculations ----------
+  function getGoals(state) {
+    return state.setup.goals.slice(0,5).filter(g => g && g.name && g.name.trim().length);
+  }
+
+  function getTargetPlan(state) {
+    const goals = getGoals(state);
+    const defaultPlan = goals.map(g => ({ id: g.id, timePct: g.targetTimePct ?? 0, moneyPct: g.targetMoneyPct ?? 0 }));
+    if (!state.targetPlan?.goals?.length) return defaultPlan;
+
+    // ensure every goal exists
+    const map = new Map(state.targetPlan.goals.map(x => [x.id, x]));
+    return goals.map(g => {
+      const t = map.get(g.id);
+      return t ? { id: g.id, timePct: +t.timePct || 0, moneyPct: +t.moneyPct || 0 } : { id: g.id, timePct: g.targetTimePct ?? 0, moneyPct: g.targetMoneyPct ?? 0 };
+    });
+  }
+
+  function dateToTs(d) { return new Date(d+"T00:00:00").getTime(); }
+
+  function filterEntries(state, daysBack) {
+    const since = Date.now() - daysBack * 86400000;
+    return state.entries.filter(e => e && e.ts >= since);
+  }
+
+  function aggregateByGoal(entries, goals) {
+    const gset = new Set(goals.map(g=>g.id));
+    const byGoal = new Map(goals.map(g => [g.id, { hours:0, money:0, energy:0, quality:0, n:0 }]));
+    for (const e of entries) {
+      if (!gset.has(e.goalId)) continue;
+      const agg = byGoal.get(e.goalId);
+      agg.hours += +e.hours || 0;
+      agg.money += +e.money || 0;
+      agg.energy += +e.energy || 0;
+      agg.quality += +e.quality || 0;
+      agg.n += 1;
+    }
+    return byGoal;
+  }
+
+  function pctSplit(byGoal, goals) {
+    const totalH = sum(goals.map(g => byGoal.get(g.id)?.hours || 0));
+    const totalM = sum(goals.map(g => byGoal.get(g.id)?.money || 0));
+    const res = goals.map(g => {
+      const h = byGoal.get(g.id)?.hours || 0;
+      const m = byGoal.get(g.id)?.money || 0;
+      return {
+        id: g.id,
+        timePct: totalH > 0 ? (h / totalH) * 100 : 0,
+        moneyPct: totalM > 0 ? (m / totalM) * 100 : 0,
+        hours: h,
+        money: m
+      };
+    });
+    return { totalH, totalM, res };
+  }
+
+  function alignmentScore(state, windowDays=14) {
+    const goals = getGoals(state);
+    const target = getTargetPlan(state);
+    const entries = filterEntries(state, windowDays);
+    const byGoal = aggregateByGoal(entries, goals);
+    const { res } = pctSplit(byGoal, goals);
+
+    // Weighted mean absolute percentage error, transformed into score
+    // score = 100 - normalized error
+    const weightSum = sum(goals.map(g => +g.weight || 1)) || 1;
+
+    let err = 0;
+    for (const g of goals) {
+      const w = (+g.weight || 1) / weightSum;
+      const actual = res.find(x=>x.id===g.id) || { timePct:0, moneyPct:0 };
+      const tgt = target.find(x=>x.id===g.id) || { timePct:0, moneyPct:0 };
+      const eTime = Math.abs((actual.timePct||0) - (tgt.timePct||0)) / 100;   // 0..1
+      const eMoney = Math.abs((actual.moneyPct||0) - (tgt.moneyPct||0)) / 100; // 0..1
+      // time is usually more actionable than money daily; weight time higher
+      err += w * (0.65*eTime + 0.35*eMoney);
+    }
+    const score = clamp(Math.round((1 - err) * 100), 0, 100);
+    return { score, actual: res, target, goals, windowDays };
+  }
+
+  function driftScore(state) {
+    // drift = difference between last 7d alignment and last 30d alignment
+    const a7 = alignmentScore(state, 7).score;
+    const a30 = alignmentScore(state, 30).score;
+    const drift = a7 - a30; // + means improving
+    return { a7, a30, drift };
+  }
+
+  function burnoutRisk(state) {
+    // Deterministic: energy debt trend from entries + sleep target + stacking
+    // energy debt per day = sum(energy) - (sleepHours * 1.1) - (energyCap * 0.6)
+    // stacking = count of high energy entries same day (>=7)
+    const sleep = +state.setup.sleepHours || 7.5;
+    const cap = +state.setup.energyCap || 7;
+    const last14 = filterEntries(state, 14);
+
+    const byDay = new Map();
+    for (const e of last14) {
+      const d = e.date;
+      if (!byDay.has(d)) byDay.set(d, { energy:0, high:0, n:0 });
+      const x = byDay.get(d);
+      const en = +e.energy || 0;
+      x.energy += en;
+      x.n += 1;
+      if (en >= 7) x.high += 1;
+    }
+
+    const days = [...byDay.entries()].sort((a,b)=>dateToTs(a[0]) - dateToTs(b[0]));
+    const debts = days.map(([d, x]) => {
+      const recovery = (sleep * 1.1) + (cap * 0.6);
+      const debt = x.energy - recovery;
+      const stackPenalty = Math.max(0, x.high - 2) * 1.2; // more than 2 heavy items/day
+      return { date: d, debt: debt + stackPenalty, high: x.high };
+    });
+
+    const last7 = debts.slice(-7);
+    const avgDebt = last7.length ? sum(last7.map(x=>x.debt))/last7.length : 0;
+
+    // trend: compare last 3 vs previous 3
+    const tail = debts.slice(-6);
+    let trend = 0;
+    if (tail.length >= 6) {
+      const a = sum(tail.slice(0,3).map(x=>x.debt))/3;
+      const b = sum(tail.slice(3,6).map(x=>x.debt))/3;
+      trend = b - a;
+    }
+
+    // map to risk %
+    const riskRaw = (avgDebt * 9) + (trend * 10);
+    const risk = clamp(Math.round(50 + riskRaw), 0, 100);
+
+    let label = "Low";
+    if (risk >= 70) label = "High";
+    else if (risk >= 45) label = "Moderate";
+
+    return { risk, label, avgDebt: round(avgDebt,2), trend: round(trend,2), debts };
+  }
+
+  function freedomBudget(state) {
+    const wake = +state.setup.weeklyWakeHours || 112;
+    const fixed = +state.setup.weeklyFixedHours || 0;
+    const free = Math.max(0, wake - fixed);
+    return { wake, fixed, free };
+  }
+
+  function thrivingEfficiency(state, days=14) {
+    // Quality per unit cost: (quality avg) / (hours + money normalized + energy normalized)
+    // Not a “motivation score”: a deterministic efficiency indicator
+    const entries = filterEntries(state, days);
+    if (!entries.length) return { score: 0, details: null };
+
+    const q = sum(entries.map(e => (+e.quality||0)));
+    const h = sum(entries.map(e => (+e.hours||0)));
+    const m = sum(entries.map(e => (+e.money||0)));
+    const en = sum(entries.map(e => (+e.energy||0)));
+
+    const income = +state.setup.monthlyIncome || 0;
+    const moneyNorm = income > 0 ? (m / (income / 4)) : (m / 250); // fallback scale
+    const denom = (h * 1.0) + (moneyNorm * 4.0) + (en * 0.8) + 1e-6;
+
+    const eff = (q / denom);
+    const score = clamp(Math.round(eff * 18), 0, 100);
+
+    return { score, details: { q: round(q,1), h: round(h,1), m: round(m,0), en: round(en,1) } };
+  }
+
+  function projections(state) {
+    // Deterministic projections using last 14-day average allocation * weights
+    const { goals } = alignmentScore(state, 14);
+    const entries = filterEntries(state, 14);
+    const byGoal = aggregateByGoal(entries, goals);
+    const { totalH, totalM } = pctSplit(byGoal, goals);
+
+    const weeksPerYear = 52;
+    const annualHours = (totalH / 14) * 7 * weeksPerYear; // approximate weekly avg * 52
+    const annualMoney = (totalM / 14) * 7 * weeksPerYear;
+
+    // Create a “trajectory score” that compounds with consistent allocation
+    // Score = sum( weight * (hours^0.7 + moneyFactor) )
+    const weightSum = sum(goals.map(g=>+g.weight||1)) || 1;
+
+    const goalLines = goals.map(g => {
+      const w = (+g.weight||1)/weightSum;
+      const h = byGoal.get(g.id)?.hours || 0;
+      const m = byGoal.get(g.id)?.money || 0;
+      const hW = (h / 14) * 7; // weekly hours
+      const mW = (m / 14) * 7; // weekly money
+      const base = w * (Math.pow(hW, 0.78) * 10 + Math.sqrt(mW+1) * 3);
+      return { name: g.name, weeklyHours: round(hW,2), weeklyMoney: round(mW,0), base: round(base,2) };
+    });
+
+    const baseTotal = sum(goalLines.map(x=>x.base));
+    const oneYear = round(baseTotal * 52, 1);
+    const fiveYear = round(baseTotal * 52 * 5 * 1.12, 1); // mild compounding factor for consistency
+
+    return {
+      annualHours: round(annualHours,0),
+      annualMoney: round(annualMoney,0),
+      goalLines,
+      oneYear,
+      fiveYear
+    };
+  }
+
+  // ---------- Charts (no libraries) ----------
+  function drawStackedBars(canvas, labels, series, colors, opts={}) {
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    // bg
+    ctx.fillStyle = "rgba(9,16,32,.35)";
+    ctx.fillRect(0,0,W,H);
+
+    const padL = 56, padR = 18, padT = 18, padB = 38;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+
+    // y grid 0..100
+    ctx.strokeStyle = "rgba(29,49,92,.55)";
+    ctx.lineWidth = 1;
+    for (let i=0;i<=4;i++){
+      const y = padT + (plotH * i/4);
+      ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+      const val = 100 - (i*25);
+      ctx.fillStyle = "rgba(156,178,218,.85)";
+      ctx.font = "11px ui-monospace, monospace";
+      ctx.fillText(val+"%", 12, y+4);
+    }
+
+    const n = labels.length;
+    if (!n) return;
+
+    const barW = plotW / n;
+    for (let i=0;i<n;i++){
+      const x0 = padL + i*barW + barW*0.18;
+      const w = barW*0.64;
+
+      let yTop = padT + plotH;
+      for (let s=0;s<series.length;s++){
+        const v = series[s][i] ?? 0; // percentage 0..100
+        const h = plotH * (v/100);
+        const y = yTop - h;
+        ctx.fillStyle = colors[s % colors.length];
+        ctx.fillRect(x0, y, w, h);
+        yTop = y;
+      }
+
+      // labels
+      ctx.fillStyle = "rgba(156,178,218,.9)";
+      ctx.font = "11px ui-monospace, monospace";
+      const lab = labels[i];
+      const tx = x0 + w/2 - (lab.length*3);
+      ctx.fillText(lab, tx, padT + plotH + 24);
+    }
+
+    // legend
+    const lx = padL, ly = 10;
+    ctx.font = "12px ui-sans-serif, system-ui";
+    for (let s=0;s<series.length;s++){
+      ctx.fillStyle = colors[s % colors.length];
+      ctx.fillRect(lx + s*160, ly, 10, 10);
+      ctx.fillStyle = "rgba(234,240,255,.9)";
+      ctx.fillText(opts.legend?.[s] || ("Series "+(s+1)), lx + s*160 + 14, ly+10);
+    }
+  }
+
+  function drawLine(canvas, points, opts={}) {
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    ctx.fillStyle = "rgba(9,16,32,.35)";
+    ctx.fillRect(0,0,W,H);
+
+    const padL = 56, padR = 18, padT = 18, padB = 34;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+
+    const xs = points.map(p=>p.x);
+    const ys = points.map(p=>p.y);
+    const minX = Math.min(...xs), maxX = Math.max(...xs);
+    const minY = opts.minY ?? Math.min(...ys, 0);
+    const maxY = opts.maxY ?? Math.max(...ys, 100);
+
+    // grid
+    ctx.strokeStyle = "rgba(29,49,92,.55)";
+    for (let i=0;i<=4;i++){
+      const y = padT + (plotH*i/4);
+      ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+      const val = Math.round(maxY - (maxY-minY)*(i/4));
+      ctx.fillStyle = "rgba(156,178,218,.85)";
+      ctx.font = "11px ui-monospace, monospace";
+      ctx.fillText(val, 16, y+4);
+    }
+
+    const xScale = (x) => padL + ( (x-minX)/(maxX-minX || 1) ) * plotW;
+    const yScale = (y) => padT + plotH - ( (y-minY)/(maxY-minY || 1) ) * plotH;
+
+    // line
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = opts.color || "#38bdf8";
+    ctx.beginPath();
+    points.forEach((p,i)=>{
+      const x = xScale(p.x), y = yScale(p.y);
+      if (i===0) ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // points
+    ctx.fillStyle = opts.color || "#38bdf8";
+    for (const p of points){
+      const x = xScale(p.x), y = yScale(p.y);
+      ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+    }
+
+    // x labels
+    ctx.fillStyle = "rgba(156,178,218,.9)";
+    ctx.font = "11px ui-monospace, monospace";
+    const step = Math.max(1, Math.floor(points.length / 6));
+    for (let i=0;i<points.length;i+=step){
+      const p = points[i];
+      const x = xScale(p.x);
+      const lab = p.label ?? "";
+      ctx.fillText(lab, x- (lab.length*3), padT+plotH+22);
+    }
+  }
+
+  // ---------- UI glue ----------
+  let STATE = null;
+  let UNLOCKED_PASSPHRASE = null; // if encrypted mode unlocked
+  let ENCRYPTED = false;
+
+  const palette = ["#38bdf8","#a78bfa","#34d399","#fbbf24","#fb7185","#22c55e","#60a5fa"];
+
+  function setPill() {
+    const el = $("pillStatus");
+    if (ENCRYPTED && UNLOCKED_PASSPHRASE) el.innerHTML = "<strong>Unlocked</strong> · Encrypted";
+    else if (ENCRYPTED) el.innerHTML = "<strong>Locked</strong> · Encrypted";
+    else el.innerHTML = "<strong>Unlocked</strong> · Local-only";
+  }
+
+  function persist() {
+    if (!STATE) return;
+    if (ENCRYPTED) {
+      // only persist encrypted if we have passphrase; otherwise keep as-is
+      if (!UNLOCKED_PASSPHRASE) return;
+      saveEncrypted(STATE, UNLOCKED_PASSPHRASE).then(()=>toast("Saved (encrypted)."));
+    } else {
+      savePlain(STATE);
+      toast("Saved.");
+    }
+  }
+
+  function hardPersistNoToast() {
+    if (!STATE) return;
+    if (ENCRYPTED && UNLOCKED_PASSPHRASE) return saveEncrypted(STATE, UNLOCKED_PASSPHRASE);
+    if (!ENCRYPTED) { savePlain(STATE); return Promise.resolve(); }
+    return Promise.resolve();
+  }
+
+  function ensureStateLoaded() {
+    const meta = loadMeta();
+    ENCRYPTED = !!meta.encrypted;
+
+    if (!ENCRYPTED) {
+      const plain = loadPlain();
+      STATE = plain || defaultState();
+      setPill();
+      return Promise.resolve(true);
+    }
+
+    // encrypted but not unlocked
+    STATE = null;
+    UNLOCKED_PASSPHRASE = null;
+    setPill();
+    return Promise.resolve(false);
+  }
+
+  async function unlockFlow() {
+    const meta = loadMeta();
+    if (!meta.encrypted) return true;
+    const cipher = localStorage.getItem(LS_ENC);
+    if (!cipher || !meta.saltB64 || !meta.ivB64) {
+      toast("Encrypted data missing. Reset or import.");
+      return false;
+    }
+    const pass = prompt("Enter passphrase to unlock Life OS:");
+    if (!pass) return false;
+
+    try {
+      const st = await decryptState(cipher, pass, meta.saltB64, meta.ivB64);
+      if (!st) throw new Error("bad json");
+      STATE = st;
+      UNLOCKED_PASSPHRASE = pass;
+      ENCRYPTED = true;
+      setPill();
+      toast("Unlocked.");
+      return true;
+    } catch (e) {
+      console.error(e);
+      toast("Wrong passphrase.");
+      return false;
+    }
+  }
+
+  async function lockFlow() {
+    if (!STATE) {
+      toast("Nothing to lock.");
+      return;
+    }
+    const pass = prompt("Set a passphrase (you must remember it):");
+    if (!pass || pass.length < 6) {
+      toast("Passphrase too short (min 6).");
+      return;
+    }
+    await saveEncrypted(STATE, pass);
+    UNLOCKED_PASSPHRASE = pass;
+    ENCRYPTED = true;
+    setPill();
+    toast("Encrypted & locked.");
+  }
+
+  function switchView(name) {
+    document.querySelectorAll(".navbtn").forEach(b => b.classList.toggle("active", b.dataset.view === name));
+    document.querySelectorAll("main .view").forEach(v => v.style.display = "none");
+    $("view-"+name).style.display = "block";
+    // refresh view
+    renderAll();
+  }
+
+  // ---------- Renderers ----------
+  function renderGoalsSetup() {
+    const wrap = $("goalsWrap");
+    wrap.innerHTML = "";
+    const goals = getGoals(STATE);
+
+    goals.forEach((g, idx) => {
+      const div = document.createElement("div");
+      div.className = "panel";
+      div.style.margin = "10px 0 0";
+      div.innerHTML = `
+        <div class="split">
+          <h2 style="margin:0">Goal ${idx+1}</h2>
+          <button class="secondary" data-del="${g.id}" ${goals.length<=1 ? "disabled" : ""}>Delete</button>
+        </div>
+        <div class="row">
+          <div>
+            <label>Name</label>
+            <input data-gname="${g.id}" value="${escapeHtml(g.name)}" />
+          </div>
+          <div>
+            <label>Weight (1–5)</label>
+            <input type="number" min="1" max="5" step="1" data-gw="${g.id}" value="${+g.weight||1}" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Target time %</label>
+            <input type="number" min="0" max="100" step="1" data-gt="${g.id}" value="${+g.targetTimePct||0}" />
+          </div>
+          <div>
+            <label>Target money %</label>
+            <input type="number" min="0" max="100" step="1" data-gm="${g.id}" value="${+g.targetMoneyPct||0}" />
+          </div>
+        </div>
+        <div class="hint">Targets don’t need to sum to 100 — the engine normalizes and measures relative drift.</div>
+      `;
+      wrap.appendChild(div);
+    });
+
+    wrap.querySelectorAll("button[data-del]").forEach(btn=>{
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-del");
+        STATE.setup.goals = STATE.setup.goals.filter(x => x.id !== id);
+        // remove from target plan too
+        if (STATE.targetPlan?.goals) STATE.targetPlan.goals = STATE.targetPlan.goals.filter(x=>x.id!==id);
+        hardPersistNoToast().then(()=>{ toast("Goal deleted."); renderAll(); });
+      });
+    });
+  }
+
+  function renderSetupValues() {
+    $("setWeeklyHours").value = STATE.setup.weeklyWakeHours ?? 112;
+    $("setFixedHours").value = STATE.setup.weeklyFixedHours ?? 55;
+    $("setMonthlyIncome").value = STATE.setup.monthlyIncome ?? 0;
+    $("setMonthlyEssentials").value = STATE.setup.monthlyEssentials ?? 0;
+    $("setSleepHrs").value = STATE.setup.sleepHours ?? 7.5;
+    $("setEnergyCap").value = STATE.setup.energyCap ?? 7;
+  }
+
+  function renderLogGoalSelect() {
+    const sel = $("logGoal");
+    sel.innerHTML = "";
+    const goals = getGoals(STATE);
+    for (const g of goals) {
+      const opt = document.createElement("option");
+      opt.value = g.id;
+      opt.textContent = g.name;
+      sel.appendChild(opt);
+    }
+  }
+
+  function renderEntriesTable() {
+    const tb = $("entriesTbody");
+    const q = ($("logSearch").value || "").toLowerCase().trim();
+    const goals = new Map(getGoals(STATE).map(g=>[g.id,g.name]));
+
+    const rows = STATE.entries
+      .slice()
+      .sort((a,b)=>b.ts-a.ts)
+      .filter(e => {
+        if (!q) return true;
+        const g = (goals.get(e.goalId) || "").toLowerCase();
+        const c = (e.category||"").toLowerCase();
+        const n = (e.note||"").toLowerCase();
+        return g.includes(q) || c.includes(q) || n.includes(q);
+      })
+      .slice(0, 80);
+
+    tb.innerHTML = "";
+    for (const e of rows) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${e.date}</td>
+        <td>${escapeHtml(goals.get(e.goalId) || "—")}</td>
+        <td class="mono">${escapeHtml(e.category || "—")}</td>
+        <td class="right mono">${(+e.hours||0) ? round(+e.hours||0,2) : ""}</td>
+        <td class="right mono">${(+e.money||0) ? round(+e.money||0,0) : ""}</td>
+        <td class="right mono">${(+e.energy||0) ? (+e.energy||0) : ""}</td>
+        <td class="right mono">${(+e.quality||0) ? (+e.quality||0) : ""}</td>
+        <td>${escapeHtml((e.note||"").slice(0,60))}</td>
+        <td class="right"><button class="secondary" data-rm="${e.id}">✕</button></td>
+      `;
+      tb.appendChild(tr);
+    }
+
+    tb.querySelectorAll("button[data-rm]").forEach(btn=>{
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-rm");
+        STATE.entries = STATE.entries.filter(x => x.id !== id);
+        hardPersistNoToast().then(()=>{ toast("Entry removed."); renderAll(); });
+      });
+    });
+  }
+
+  function renderDashboard() {
+    const { score } = alignmentScore(STATE, 14);
+    const drift = driftScore(STATE);
+    const burn = burnoutRisk(STATE);
+    const free = freedomBudget(STATE);
+    const eff = thrivingEfficiency(STATE, 14);
+    const proj = projections(STATE);
+
+    // chips
+    const chips = $("dashChips");
+    chips.innerHTML = "";
+    const mkChip = (k,v) => {
+      const s = document.createElement("div");
+      s.className = "chip";
+      s.innerHTML = `<span class="k">${escapeHtml(k)}:</span> <span>${escapeHtml(v)}</span>`;
+      return s;
+    };
+    chips.appendChild(mkChip("Efficiency", eff.score + "%"));
+    chips.appendChild(mkChip("Wake hrs/wk", String(free.wake)));
+    chips.appendChild(mkChip("Fixed hrs/wk", String(free.fixed)));
+    chips.appendChild(mkChip("Entries (14d)", String(filterEntries(STATE,14).length)));
+
+    // metrics
+    $("mAlign").textContent = score + "%";
+    $("barAlign").style.width = score + "%";
+    $("mDrift").innerHTML = `${drift.drift >= 0 ? "<span class='good'>+" : "<span class='danger'>"}${round(drift.drift,1)}%</span>`;
+    $("mDriftS").textContent = `7d alignment ${drift.a7}% vs 30d ${drift.a30}%`;
+
+    const burnCol = burn.risk >= 70 ? "danger" : burn.risk >= 45 ? "warn" : "good";
+    $("mBurn").innerHTML = `<span class="${burnCol}">${burn.label}</span> (${burn.risk}%)`;
+    $("mBurnS").textContent = `Avg debt ${burn.avgDebt} · Trend ${burn.trend >= 0 ? "+" : ""}${burn.trend}`;
+
+    $("mFree").textContent = `${round(free.free,1)}h/wk`;
+    $("mFreeS").textContent = `Free budget after constraints`;
+
+    // allocation chart (7d) - stacked by goal time %
+    const goals = getGoals(STATE);
+    const last7 = filterEntries(STATE, 7);
+
+    // group by day -> goal percent time
+    const days = [];
+    for (let i=6;i>=0;i--){
+      const d = new Date(Date.now() - i*86400000).toISOString().slice(5,10); // MM-DD
+      const full = new Date(Date.now() - i*86400000).toISOString().slice(0,10);
+      days.push({ label: d, date: full });
+    }
+
+    const seriesTime = goals.map(() => Array(days.length).fill(0));
+    for (let di=0; di<days.length; di++){
+      const d = days[di].date;
+      const dayEntries = last7.filter(e=>e.date===d);
+      const byGoal = aggregateByGoal(dayEntries, goals);
+      const { res, totalH } = pctSplit(byGoal, goals);
+      for (let gi=0; gi<goals.length; gi++){
+        const pct = totalH > 0 ? (res.find(x=>x.id===goals[gi].id)?.timePct||0) : 0;
+        seriesTime[gi][di] = pct;
+      }
+    }
+    drawStackedBars($("chartAlloc"), days.map(x=>x.label), seriesTime, goals.map((_,i)=>palette[i%palette.length]), {
+      legend: goals.map(g=>g.name)
+    });
+
+    // projections
+    $("proj1y").innerHTML = formatProjectionText(proj, 1);
+    $("proj5y").innerHTML = formatProjectionText(proj, 5);
+
+    // nav meta quick
+    $("navDash").textContent = score + "%";
+    $("navSetup").textContent = getGoals(STATE).length + " goals";
+    $("navLog").textContent = TODAY().slice(5);
+    $("navSim").textContent = "What-if";
+    $("navInsights").textContent = (drift.drift>=0? "↗ " : "↘ ") + round(drift.drift,1) + "%";
+  }
+
+  function formatProjectionText(proj, years) {
+    const mult = years === 1 ? 1 : 5;
+    const header = years === 1
+      ? `Annualized from last 14 days:\n- Hours/year ≈ ${proj.annualHours}\n- Money/year ≈ ${proj.annualMoney}\n`
+      : `Extrapolated at current behavior:\n- Hours/5y ≈ ${round(proj.annualHours*5,0)}\n- Money/5y ≈ ${round(proj.annualMoney*5,0)}\n`;
+
+    const lines = proj.goalLines
+      .slice()
+      .sort((a,b)=>b.base-a.base)
+      .map(gl => `• ${gl.name}: ~${round(gl.weeklyHours*mult*52,0)}h, ~${round(gl.weeklyMoney*mult*52,0)} money`)
+      .join("\n");
+
+    const scoreLine = years === 1 ? `\nTrajectory score: ${proj.oneYear}` : `\nTrajectory score: ${proj.fiveYear}`;
+    return `<pre style="margin:0; white-space:pre-wrap">${escapeHtml(header + lines + scoreLine)}</pre>`;
+  }
+
+  function renderSimulator() {
+    const goals = getGoals(STATE);
+    const base = alignmentScore(STATE, 14);
+    const entries = filterEntries(STATE, 14);
+    const byGoal = aggregateByGoal(entries, goals);
+    const { totalH, totalM, res } = pctSplit(byGoal, goals);
+
+    // fallback: if no data, start from targets
+    const current = res.map(r => ({
+      id: r.id,
+      timePct: totalH > 0 ? r.timePct : (base.target.find(t=>t.id===r.id)?.timePct || 0),
+      moneyPct: totalM > 0 ? r.moneyPct : (base.target.find(t=>t.id===r.id)?.moneyPct || 0),
+    }));
+
+    const wrap = $("simWrap");
+    wrap.innerHTML = "";
+
+    const title = document.createElement("div");
+    title.className = "chips";
+    title.appendChild(makeChip("Baseline window", "14 days"));
+    title.appendChild(makeChip("Edit", "target weekly % allocation"));
+    wrap.appendChild(title);
+
+    const tbl = document.createElement("table");
+    tbl.className = "table";
+    tbl.innerHTML = `
+      <thead>
+        <tr>
+          <th>Goal</th>
+          <th class="right">Time %</th>
+          <th class="right">Money %</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+    const tbody = tbl.querySelector("tbody");
+
+    for (const g of goals) {
+      const c = current.find(x=>x.id===g.id) || { timePct:0, moneyPct:0 };
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${escapeHtml(g.name)}</td>
+        <td class="right"><input style="max-width:120px" type="number" min="0" max="100" step="1" data-sim-t="${g.id}" value="${Math.round(c.timePct)}"></td>
+        <td class="right"><input style="max-width:120px" type="number" min="0" max="100" step="1" data-sim-m="${g.id}" value="${Math.round(c.moneyPct)}"></td>
+      `;
+      tbody.appendChild(tr);
+    }
+    wrap.appendChild(tbl);
+
+    // compute projections from allocations (deterministic)
+    const computeSim = () => {
+      const t = goals.map(g => ({ id: g.id, t: +document.querySelector(`[data-sim-t="${g.id}"]`).value || 0, m: +document.querySelector(`[data-sim-m="${g.id}"]`).value || 0 }));
+      const normT = sum(t.map(x=>x.t)) || 1;
+      const normM = sum(t.map(x=>x.m)) || 1;
+
+      const freedom = freedomBudget(STATE);
+      const weeklyFree = freedom.free;
+      const monthlyIncome = +STATE.setup.monthlyIncome || 0;
+      const monthlyEss = +STATE.setup.monthlyEssentials || 0;
+      const monthlyFreeMoney = Math.max(0, monthlyIncome - monthlyEss);
+      const weeklyFreeMoney = monthlyFreeMoney / 4;
+
+      // convert % -> weekly hours/money
+      const plan = t.map(x => ({
+        id: x.id,
+        hoursW: weeklyFree * (x.t / normT),
+        moneyW: weeklyFreeMoney * (x.m / normM),
+      }));
+
+      const weightSum = sum(goals.map(g=>+g.weight||1)) || 1;
+      const goalLines = plan.map(p => {
+        const g = goals.find(gg=>gg.id===p.id);
+        const w = (+g.weight||1)/weightSum;
+        const base = w * (Math.pow(p.hoursW, 0.78) * 10 + Math.sqrt(p.moneyW+1) * 3);
+        return { name: g.name, hoursW: round(p.hoursW,2), moneyW: round(p.moneyW,0), base: round(base,2) };
+      });
+
+      const baseTotal = sum(goalLines.map(x=>x.base));
+      const one = round(baseTotal * 52, 1);
+      const five = round(baseTotal * 52 * 5 * 1.12, 1);
+
+      $("sim1y").innerHTML = `<pre style="margin:0; white-space:pre-wrap">${escapeHtml(renderSimText(goalLines, 1, one))}</pre>`;
+      $("sim5y").innerHTML = `<pre style="margin:0; white-space:pre-wrap">${escapeHtml(renderSimText(goalLines, 5, five))}</pre>`;
+    };
+
+    wrap.querySelectorAll("input").forEach(inp => inp.addEventListener("input", computeSim));
+    computeSim();
+
+    $("btnSimReset").onclick = () => {
+      for (const g of goals) {
+        const c = current.find(x=>x.id===g.id) || { timePct:0, moneyPct:0 };
+        document.querySelector(`[data-sim-t="${g.id}"]`).value = Math.round(c.timePct);
+        document.querySelector(`[data-sim-m="${g.id}"]`).value = Math.round(c.moneyPct);
+      }
+      computeSim();
+      toast("Reset simulator.");
+    };
+
+    $("btnSimApplyAsPlan").onclick = () => {
+      const planGoals = goals.map(g => ({
+        id: g.id,
+        timePct: +document.querySelector(`[data-sim-t="${g.id}"]`).value || 0,
+        moneyPct: +document.querySelector(`[data-sim-m="${g.id}"]`).value || 0,
+      }));
+      STATE.targetPlan = { goals: planGoals };
+      hardPersistNoToast().then(()=>{ toast("Target plan saved."); renderAll(); });
+    };
+  }
+
+  function renderSimText(goalLines, years, score) {
+    const mult = years === 1 ? 52 : 52*5;
+    const head = `Assuming constraints stay constant:\n`;
+    const lines = goalLines
+      .slice()
+      .sort((a,b)=>b.base-a.base)
+      .map(x => `• ${x.name}: ~${round(x.hoursW*mult,0)}h, ~${round(x.moneyW*mult,0)} money`)
+      .join("\n");
+    return head + lines + `\n\nTrajectory score: ${score}`;
+  }
+
+  function renderInsights() {
+    const goals = getGoals(STATE);
+    const entries14 = filterEntries(STATE, 14);
+
+    // leaks: categories consuming time with low quality and high energy
+    const cat = new Map();
+    for (const e of entries14) {
+      const k = e.category || "other";
+      if (!cat.has(k)) cat.set(k, { h:0, m:0, en:0, q:0, n:0 });
+      const x = cat.get(k);
+      x.h += +e.hours||0;
+      x.m += +e.money||0;
+      x.en += +e.energy||0;
+      x.q += +e.quality||0;
+      x.n += 1;
+    }
+
+    const cats = [...cat.entries()].map(([k,v])=>{
+      const qAvg = v.n ? v.q/v.n : 0;
+      const enAvg = v.n ? v.en/v.n : 0;
+      // leak score: high hours + high energy + low quality
+      const leak = (v.h*1.2) + (enAvg*1.4) + (Math.max(0, 6-qAvg)*1.6);
+      // roi: quality / (hours + energy + moneyNormalized)
+      const income = +STATE.setup.monthlyIncome || 0;
+      const moneyNorm = income > 0 ? (v.m / (income/4)) : (v.m/250);
+      const denom = (v.h*1.0) + (enAvg*0.7) + (moneyNorm*4.0) + 0.2;
+      const roi = (qAvg / denom);
+      return { k, ...v, qAvg, enAvg, leak, roi };
+    });
+
+    const topLeaks = cats.slice().sort((a,b)=>b.leak-a.leak).slice(0,5);
+    const topRoi = cats.slice().sort((a,b)=>b.roi-a.roi).slice(0,5);
+
+    $("insLeaks").innerHTML = topLeaks.length ? topLeaks.map(x =>
+      `<div class="chip" style="margin:6px 0; justify-content:space-between; width:100%">
+        <span><span class="k mono">${escapeHtml(x.k)}</span> — ${round(x.h,1)}h</span>
+        <span class="muted">Q ${round(x.qAvg,1)} · E ${round(x.enAvg,1)}</span>
+      </div>`
+    ).join("") : `<div class="muted">Not enough data yet. Log 7–14 days.</div>`;
+
+    $("insRoi").innerHTML = topRoi.length ? topRoi.map(x =>
+      `<div class="chip" style="margin:6px 0; justify-content:space-between; width:100%">
+        <span><span class="k mono">${escapeHtml(x.k)}</span></span>
+        <span class="muted">ROI ${round(x.roi,2)} · Q ${round(x.qAvg,1)}</span>
+      </div>`
+    ).join("") : `<div class="muted">Not enough data yet.</div>`;
+
+    // stacking risk: show days with 3+ high-energy entries
+    const burn = burnoutRisk(STATE);
+    const riskyDays = burn.debts
+      .slice()
+      .filter(x => x.debt > 2)
+      .slice(-6)
+      .map(x => `• ${x.date}: debt ${round(x.debt,1)}`)
+      .join("\n");
+
+    $("insStack").innerHTML = riskyDays
+      ? `<pre style="margin:0; white-space:pre-wrap">${escapeHtml("Days with notable energy debt:\n" + riskyDays)}</pre>`
+      : `<div class="muted">No notable stacking detected (last 14d).</div>`;
+
+    // opportunity cost snapshot: estimate annual wasted hours in top leak vs shifting to best ROI
+    const leak0 = topLeaks[0];
+    const roi0 = topRoi[0];
+    if (leak0 && roi0) {
+      const shiftH = Math.min(3, leak0.h / 2); // suggest small weekly shift
+      const annual = shiftH * 52;
+      $("insOpp").innerHTML = `<pre style="margin:0; white-space:pre-wrap">${escapeHtml(
+        `If you shifted ~${round(shiftH,1)}h/week from "${leak0.k}" → "${roi0.k}":\n≈ ${round(annual,0)} hours/year reallocated.\nThis is structural leverage (small changes, big divergence).`
+      )}</pre>`;
+    } else {
+      $("insOpp").innerHTML = `<div class="muted">Log more entries to compute opportunity cost.</div>`;
+    }
+
+    // alignment timeline 30d
+    const points = [];
+    for (let i=29;i>=0;i--){
+      const day = new Date(Date.now() - i*86400000);
+      const dateStr = day.toISOString().slice(0,10);
+      // compute alignment for window ending this day: last 14 days up to that day
+      const windowEntries = STATE.entries.filter(e => e.ts <= day.getTime() && e.ts >= (day.getTime() - 14*86400000));
+      const tmpState = { ...STATE, entries: windowEntries };
+      const a = alignmentScore(tmpState, 14).score;
+      points.push({ x: 29-i, y: a, label: dateStr.slice(5) });
+    }
+    drawLine($("chartAlign"), points, { minY: 0, maxY: 100, color: "#a78bfa" });
+  }
+
+  function renderAll() {
+    if (!STATE) return;
+    renderGoalsSetup();
+    renderSetupValues();
+    renderLogGoalSelect();
+    renderEntriesTable();
+    renderDashboard();
+    renderSimulator();
+    renderInsights();
+  }
+
+  // ---------- Actions ----------
+  function readSetupFromInputs() {
+    // goals
+    const goals = getGoals(STATE);
+    for (const g of goals) {
+      const name = document.querySelector(`[data-gname="${g.id}"]`)?.value ?? g.name;
+      const w = +document.querySelector(`[data-gw="${g.id}"]`)?.value || g.weight || 1;
+      const tt = +document.querySelector(`[data-gt="${g.id}"]`)?.value || 0;
+      const tm = +document.querySelector(`[data-gm="${g.id}"]`)?.value || 0;
+      g.name = String(name).trim().slice(0, 48) || g.name;
+      g.weight = clamp(Math.round(w), 1, 5);
+      g.targetTimePct = clamp(Math.round(tt), 0, 100);
+      g.targetMoneyPct = clamp(Math.round(tm), 0, 100);
+    }
+    // constraints
+    const wH = +$("setWeeklyHours").value || 112;
+    const fH = +$("setFixedHours").value || 0;
+    const inc = +$("setMonthlyIncome").value || 0;
+    const ess = +$("setMonthlyEssentials").value || 0;
+    const sleep = +$("setSleepHrs").value || 7.5;
+    const cap = +$("setEnergyCap").value || 7;
+
+    STATE.setup.weeklyWakeHours = clamp(wH, 1, 200);
+    STATE.setup.weeklyFixedHours = clamp(fH, 0, 200);
+    STATE.setup.monthlyIncome = clamp(inc, 0, 1e9);
+    STATE.setup.monthlyEssentials = clamp(ess, 0, 1e9);
+    STATE.setup.sleepHours = clamp(sleep, 0, 16);
+    STATE.setup.energyCap = clamp(Math.round(cap), 1, 10);
+  }
+
+  function addEntryFromForm() {
+    const date = $("logDate").value || TODAY();
+    const type = $("logType").value;
+    const goalId = $("logGoal").value;
+    const category = $("logCat").value;
+    const hours = +$("logHours").value || 0;
+    const money = +$("logMoney").value || 0;
+    const energy = clamp(+$("logEnergy").value || 0, 0, 10);
+    const quality = clamp(+$("logQuality").value || 0, 0, 10);
+    const note = ($("logNote").value || "").trim();
+
+    const entry = {
+      id: cryptoRandomId(),
+      date,
+      type,
+      goalId,
+      category,
+      hours: (type === "money") ? 0 : hours,
+      money: (type === "time") ? 0 : money,
+      energy,
+      quality,
+      note,
+      ts: dateToTs(date) + Date.now()%86400000
+    };
+
+    // sanity: avoid empty
+    if ((entry.hours<=0 && entry.money<=0) && !entry.note) {
+      toast("Add hours/money or a note.");
+      return false;
+    }
+
+    STATE.entries.push(entry);
+
+    // reset
+    $("logHours").value = "";
+    $("logMoney").value = "";
+    $("logEnergy").value = "";
+    $("logQuality").value = "";
+    $("logNote").value = "";
+    persist();
+    renderAll();
+    return true;
+  }
+
+  // ---------- Export / Import ----------
+  function exportState() {
+    if (!STATE) { toast("Unlock first."); return; }
+    const payload = JSON.stringify(STATE, null, 2);
+    const blob = new Blob([payload], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `life-os-export-${TODAY()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("Exported.");
+  }
+
+  async function importState() {
+    const inp = document.createElement("input");
+    inp.type = "file";
+    inp.accept = "application/json";
+    inp.onchange = async () => {
+      const file = inp.files?.[0];
+      if (!file) return;
+      const txt = await file.text();
+      const obj = safeJsonParse(txt, null);
+      if (!obj || typeof obj !== "object" || !obj.setup || !obj.entries) {
+        toast("Invalid file.");
+        return;
+      }
+      STATE = obj;
+      // importing overrides encryption state to unlocked plain (you can re-lock)
+      ENCRYPTED = false;
+      UNLOCKED_PASSPHRASE = null;
+      localStorage.removeItem(LS_ENC);
+      setMeta({ encrypted: false });
+      savePlain(STATE);
+      setPill();
+      toast("Imported.");
+      renderAll();
+      switchView("dashboard");
+    };
+    inp.click();
+  }
+
+  // ---------- Helpers ----------
+  function escapeHtml(s) {
+    return String(s ?? "").replace(/[&<>"']/g, (c) => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[c]));
+  }
+
+  function makeChip(k, v) {
+    const d = document.createElement("div");
+    d.className = "chip";
+    d.innerHTML = `<span class="k">${escapeHtml(k)}:</span> <span>${escapeHtml(v)}</span>`;
+    return d;
+  }
+
+  // ---------- Init ----------
+  async function init() {
+    // wire navigation
+    document.querySelectorAll(".navbtn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        // if encrypted & locked, require unlock on any view usage
+        if (ENCRYPTED && !UNLOCKED_PASSPHRASE) {
+          const ok = await unlockFlow();
+          if (!ok) return;
+        }
+        switchView(btn.dataset.view);
+      });
+    });
+
+    // top actions
+    $("btnExport").onclick = () => exportState();
+    $("btnImport").onclick = () => importState();
+
+    $("btnReset").onclick = async () => {
+      if (!confirm("Reset Life OS? This wipes local data.")) return;
+      clearAll();
+      ENCRYPTED = false;
+      UNLOCKED_PASSPHRASE = null;
+      STATE = defaultState();
+      savePlain(STATE);
+      setMeta({ encrypted: false });
+      setPill();
+      toast("Reset.");
+      renderAll();
+      switchView("setup");
+    };
+
+    $("btnLock").onclick = async () => {
+      if (!STATE && ENCRYPTED && !UNLOCKED_PASSPHRASE) {
+        const ok = await unlockFlow();
+        if (!ok) return;
+      }
+      if (!ENCRYPTED) {
+        await lockFlow();
+      } else {
+        // lock by clearing passphrase in memory
+        UNLOCKED_PASSPHRASE = null;
+        STATE = null;
+        toast("Locked. Reload to unlock.");
+        setPill();
+      }
+    };
+
+    $("btnAddGoal").onclick = () => {
+      const goals = getGoals(STATE);
+      if (goals.length >= 5) return toast("Max 5 goals.");
+      STATE.setup.goals.push({ id: cryptoRandomId(), name: "New Goal", weight: 2, targetTimePct: 10, targetMoneyPct: 10 });
+      hardPersistNoToast().then(()=>{ toast("Goal added."); renderAll(); });
+    };
+
+    $("btnSaveSetup").onclick = () => { readSetupFromInputs(); persist(); renderAll(); };
+    $("btnSaveSetup2").onclick = () => { readSetupFromInputs(); persist(); renderAll(); };
+
+    $("btnAddEntry").onclick = () => addEntryFromForm();
+    $("btnQuickFill").onclick = () => {
+      $("logType").value = "time";
+      $("logCat").value = "meeting";
+      $("logHours").value = "1";
+      $("logEnergy").value = "6";
+      $("logQuality").value = "5";
+      $("logNote").value = "Meeting — capture decisions + next actions.";
+      toast("Quick filled.");
+    };
+
+    $("logSearch").addEventListener("input", renderEntriesTable);
+    $("btnClearFilter").onclick = () => { $("logSearch").value = ""; renderEntriesTable(); };
+
+    $("logNote").addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.key === "Enter") {
+        e.preventDefault();
+        addEntryFromForm();
+      }
+    });
+
+    // init date
+    $("logDate").value = TODAY();
+
+    // load state
+    const unlocked = await ensureStateLoaded();
+    if (!unlocked && ENCRYPTED) {
+      // show lock state
+      toast("Encrypted. Unlock to use.");
+      switchView("dashboard");
+      return;
+    }
+
+    if (!STATE) STATE = defaultState();
+    savePlain(STATE); // ensure exists for first-run
+    setMeta({ encrypted: false });
+    setPill();
+
+    renderAll();
+    switchView("dashboard");
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
